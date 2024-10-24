@@ -45,7 +45,6 @@ targetCustomizations:
             - chonchon
             - elqui
             - konkong
-            - ruka
     helm:
       values:
         clusterSecretStores:
