@@ -1,0 +1,15 @@
+---
+apiVersion: ceph.rook.io/v1
+kind: CephBucketTopic
+metadata:
+  name: lsst.s3.raw.latiss
+spec:
+  objectStoreName: s3-butler
+  objectStoreNamespace: rook-ceph
+  persistent: true
+  opaqueData: "&mechanism=SCRAM-SHA-512"
+  endpoint:
+    kafka:
+      uri: {{ $.Values.usr }}
+      ackLevel: broker
+      useSSL: true

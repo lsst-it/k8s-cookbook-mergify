@@ -1,0 +1,8 @@
+---
+defaultNamespace: &name rook-ceph-secret-kafka
+labels:
+  bundle: *name
+helm:
+  releaseName: *name
+  values:
+    usr: test
