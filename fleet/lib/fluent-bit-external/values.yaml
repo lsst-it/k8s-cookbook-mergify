@@ -310,7 +310,7 @@ config:
         Buffer_Size        1M
         Match_Regex        (?:rsyslog)\.(.*)
         Host               opensearch.${ .ClusterName }.${ .ClusterLabels.site }.lsst.org
-        Port               9200
+        Port               80
         HTTP_User          ${`${OS_LOGGING_USERNAME}`}
         HTTP_Passwd        ${`${OS_LOGGING_PASSWORD}`}
         Index              logs-hosts
@@ -325,7 +325,7 @@ config:
         Buffer_Size        1M
         Match_Regex        (?:firewall)\.(.*)
         Host               opensearch.${ .ClusterName }.${ .ClusterLabels.site }.lsst.org
-        Port               9200
+        Port               80
         HTTP_User          ${`${OS_LOGGING_USERNAME}`}
         HTTP_Passwd        ${`${OS_LOGGING_PASSWORD}`}
         Index              logs-firewall
@@ -340,7 +340,7 @@ config:
         Buffer_Size        1M
         Match_Regex        (?:netlog)\.(.*)
         Host               opensearch.${ .ClusterName }.${ .ClusterLabels.site }.lsst.org
-        Port               9200
+        Port               80
         HTTP_User          ${`${OS_LOGGING_USERNAME}`}
         HTTP_Passwd        ${`${OS_LOGGING_PASSWORD}`}
         Index              logs-network
