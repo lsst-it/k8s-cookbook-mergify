@@ -1,0 +1,21 @@
+apiVersion: fluentbit.fluent.io/v1alpha2
+kind: ClusterMultilineParser
+metadata:
+  name: multiline-parser
+  namespace: fluent-operator
+  labels:
+    fluentbit.fluent.io/enabled: "true"
+spec:
+  parsers:
+    - name: multiline-regex
+      type: regex
+      # Patrón para logs de Java/Go stack traces
+      rules:
+        - state: start_state
+          pattern: '^\d{4}-\d{2}-\d{2}\s\d{2}:\d{2}:\d{2}'
+        - state: cont
+          pattern: '^\s+at'
+        - state: cont
+          pattern: '^\s+...'
+        - state: cont
+          pattern: '^Caused by:'

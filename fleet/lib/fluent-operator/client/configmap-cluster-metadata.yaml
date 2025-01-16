@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: cluster-metadata
+  namespace: fluent-operator
+data:
+  CLUSTER_NAME: ${CLUSTER_NAME}

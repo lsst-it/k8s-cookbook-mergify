@@ -1,0 +1,5 @@
+---
+resources:
+  - clusteroutput-fluentbit-loki.yaml
+  - configmap-cluster-metadata.yaml
+  - clusterfilter.yaml

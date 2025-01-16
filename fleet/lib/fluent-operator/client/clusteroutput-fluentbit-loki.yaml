@@ -1,0 +1,31 @@
+apiVersion: fluentbit.fluent.io/v1alpha2
+kind: ClusterOutput
+metadata:
+  labels:
+    fluentbit.fluent.io/enabled: "true"
+  name: fluentbit-output-loki
+  namespace: fluent-operator
+spec:
+  matchRegex: (?:kube|service)\.(.*)
+  loki:
+    host: loki.kueyen.dev.lsst.org
+    port: 443
+    tls:
+      verify: false
+    labels:
+      - job=fluentbit
+      - k8s_namespace=$kubernetes['namespace_name']
+      - k8s_pod_name=$kubernetes['pod_name']
+      - k8s_container_name=$kubernetes['container_name']
+      - k8s_host=$kubernetes['host']
+      - k8s_image=$kubernetes['container_image']
+      - cluster="${CLUSTER_NAME}"
+    label_keys:
+      - app
+      - release
+      - component
+      - k8s-app
+    line_format: json
+    auto_kubernetes_labels: true
+    retry_limit: 3
+    buffer_size: "100MB"

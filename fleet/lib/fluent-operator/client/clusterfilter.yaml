@@ -1,0 +1,45 @@
+apiVersion: fluentbit.fluent.io/v1alpha2
+kind: ClusterFilter
+metadata:
+  name: kubernetes-metadata
+  namespace: fluent-operator
+spec:
+  filters:
+    - kubernetes:
+        labels: true
+        annotations: false
+        mergeLog: true
+        keepLog: false
+        k8sLoggingParser: true
+        k8sLoggingExclude: true
+    - lua:
+        script: |
+          function containerd(tag, timestamp, record)
+            if(record["logtag"]~=nil) then
+              timeStr = os.date("!*t", timestamp["sec"])
+              t = string.format("%4d-%02d-%02dT%02d:%02d:%02d.%sZ",
+                timeStr["year"], timeStr["month"], timeStr["day"],
+                timeStr["hour"], timeStr["min"], timeStr["sec"],
+                timestamp["nsec"])
+              record["time"] = t
+              record["log"] = record["message"]
+              record["message"] = nil
+              return 1, timestamp, record
+            else
+              return 0, timestamp, record
+            end
+          end
+        call: containerd
+    - nest:
+        operation: lift
+        nested_under: kubernetes
+        add_prefix: kubernetes_
+    - modify:
+        add:
+          - cluster: ${CLUSTER_NAME}
+        remove:
+          - stream
+          - kubernetes_pod_id
+          - kubernetes_host
+          - kubernetes_container_hash
+  match: kube.*

@@ -17,3 +17,7 @@ dependsOn:
   - selector:
       matchLabels:
         bundle: fluent-bit-external-pre
+
+targetCustomizations:
+  - name: Ayekan
+    clusterName: ayekan

@@ -358,7 +358,59 @@ config:
         URI /api/alert
         Format json
         Json_date_key date
-        Json_date_format epoch
+        Json_date_format epochs
+        
+    # Loki syslog logs output
+    [Output]
+        Name               loki
+        Match_Regex       (?:rsyslog)\.(.*)
+        Host              loki.kueyen.dev.lsst.org
+        Port              443
+        tls.verify        false
+        Labels           job="syslog", host="$host", ident="$ident"
+        Label_Keys       facility,priority,program
+        Remove_Keys      time,message
+        Line_Format      json
+        Buffer_Size      1M
+
+    # Loki firewall logs output
+    [Output]
+        Name               loki
+        Match_Regex       (?:firewall)\.(.*)
+        Host              loki.kueyen.dev.lsst.org
+        Port              443
+        tls.verify        false
+        Labels           job="firewall", host="$host"
+        Label_Keys       facility,priority,program
+        Remove_Keys      time
+        Line_Format      json
+        Buffer_Size      1M
+
+    # Loki networking logs output
+    [Output]
+        Name               loki
+        Match_Regex       (?:network)\.(.*)
+        Host              loki.kueyen.dev.lsst.org
+        Port              443
+        tls.verify        false
+        Labels           job="network", host="$host"
+        Label_Keys       facility,priority,program
+        Remove_Keys      time
+        Line_Format      json
+        Buffer_Size      1M
+
+    # Loki sudo logs output
+    [Output]
+        Name               loki
+        Match             sudo.*
+        Host              loki.kueyen.dev.lsst.org
+        Port              443
+        tls.verify        false
+        Labels           job="sudo", host="$host", user="$user", command="$command"
+        Label_Keys       tty,working_directory,sudo_user
+        Remove_Keys      time
+        Line_Format      json
+        Buffer_Size      1M
 
   ## https://docs.fluentbit.io/manual/administration/configuring-fluent-bit/classic-mode/upstream-servers
   ## This configuration is deprecated, please use `extraFiles` instead.

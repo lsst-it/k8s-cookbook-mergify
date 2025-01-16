@@ -1,0 +1,48 @@
+---
+defaultNamespace: &name fluent-operator
+labels:
+  bundle: *name
+namespaceLabels:
+  lsst.io/discover: "true"
+kustomize:
+  dir: client
+helm:
+  chart: *name
+  releaseName: *name
+  repo: https://fluent.github.io/helm-charts
+  version: 3.2.0
+  waitForJobs: true
+  values:
+    clusterName: ${CLUSTER_NAME}
+    fluentbit:
+      resources:
+        limits:
+          cpu: 200m
+          memory: 256Mi
+        requests:
+          cpu: 100m
+          memory: 128Mi
+      labels:
+        lsst.team.io/infra: "true"
+        lsst.io/role: logging
+        lsst.io/component: fluent-bit
+        lsst.io/env: kube
+        lsst.io/project: o11y
+      extraEnv:
+        - name: NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        - name: CLUSTER_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: cluster-metadata
+              key: CLUSTER_NAME
+
+targetCustomizations:
+  - name: kueyen
+    clusterName: kueyen
+  - name: ayekan
+    clusterName: ayekan
+  - name: ruka
+    clusterName: ruka
