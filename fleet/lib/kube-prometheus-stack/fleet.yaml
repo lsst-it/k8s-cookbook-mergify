@@ -73,6 +73,13 @@ targetCustomizations:
         - pvc/values.yaml
         - aggregator/values.yaml
         - overlays/antu/values.yaml
+  - name: kueyen
+    clusterName: kueyen
+    helm:
+      valuesFiles:
+        - pvc/values.yaml
+        - aggregator/values-kueyen.yaml
+        - overlays/kueyen/values.yaml
   - name: cl-nopvc
     clusterSelector:
       matchExpressions:
@@ -96,6 +103,7 @@ targetCustomizations:
               - url: https://mimir.ayekan.dev.lsst.org/api/v1/push
               - url: https://mimir.ruka.dev.lsst.org/api/v1/push
               - url: https://mimir.antu.ls.lsst.org/api/v1/push
+              - url: https://mimir.kueyen.dev.lsst.org/api/v1/push
   - name: cl-default
     clusterSelector:
       matchExpressions:

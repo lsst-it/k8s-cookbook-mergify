@@ -1,0 +1,107 @@
+---
+prometheus:
+  prometheusSpec:
+    externalUrl: https://prometheus.${ .ClusterName }.${ .ClusterLabels.site }.lsst.org
+    remoteWrite:
+      - url: http://mimir-distributed-gateway.mimir:80/api/v1/push
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+      nginx.ingress.kubernetes.io/backend-protocol: HTTP
+      nginx.ingress.kubernetes.io/server-snippet: |
+        proxy_ssl_verify off;
+    paths:
+      - /
+    pathType: Prefix
+    hosts:
+      - prometheus.${ .ClusterName }.${ .ClusterLabels.site }.lsst.org
+    tls:
+      - secretName: tls-prometheus-ingress
+        hosts:
+          - prometheus.${ .ClusterName }.${ .ClusterLabels.site }.lsst.org
+
+grafana:
+  enabled: true
+  serviceMonitor:
+    labels:
+      lsst.io/monitor: "true"
+  resources:
+    limits:
+      cpu: 4
+      memory: 512Mi
+    requests:
+      cpu: 250m
+      memory: 512Mi
+  persistence:
+    enabled: true
+  deploymentStrategy:
+    type: Recreate  # default is RollingUpdate, which doesn't work w/ persistence enabled
+  grafana.ini:
+    server:
+      domain: grafana.${ .ClusterName }.${ .ClusterLabels.site }.lsst.org
+      root_url: https://grafana.${ .ClusterName }.${ .ClusterLabels.site }.lsst.org
+    feature_toggles:
+      enable: autoMigrateOldPanels
+  ingress:
+    enabled: true
+    ingressClassName: nginx
+    annotations:
+      cert-manager.io/cluster-issuer: letsencrypt
+      nginx.ingress.kubernetes.io/backend-protocol: HTTP
+      nginx.ingress.kubernetes.io/server-snippet: |
+        proxy_ssl_verify off;
+    paths:
+      - /
+    pathType: Prefix
+    hosts:
+      - grafana.${ .ClusterName }.${ .ClusterLabels.site }.lsst.org
+    tls:
+      - secretName: tls-grafana-ingress
+        hosts:
+          - grafana.${ .ClusterName }.${ .ClusterLabels.site }.lsst.org
+  sidecar:
+    resources:
+      limits:
+        cpu: 500m
+        memory: 512Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
+    alerts:
+      enabled: true
+    dashboards:
+      enabled: true
+    datasources:
+      enabled: true
+  datasources:
+    datasource.yaml:
+      apiVersion: 1
+      datasources:
+        - name: Prometheus
+          type: prometheus
+          uid: prometheus
+          url: http://kube-prometheus-stack-prometheus.kube-prometheus-stack:9090/
+          access: proxy
+          jsonData:
+            httpMethod: POST
+            timeInterval: 30s
+        - name: Mimir
+          type: prometheus
+          uid: mimir
+          url: http://mimir-distributed-gateway.mimir:80/prometheus
+          access: proxy
+          isDefault: true
+          jsonData:
+            httpMethod: POST
+            timeInterval: 30s
+            tlsSkipVerify: true
+        - name: Alertmanager
+          type: alertmanager
+          uid: alertmanager
+          url: http://kube-prometheus-stack-alertmanager.kube-prometheus-stack:9093/
+          access: proxy
+          jsonData:
+            handleGrafanaManagedAlerts: false
+            implementation: prometheus
