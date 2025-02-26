@@ -1,0 +1,7 @@
+community:
+  snmpLsstCommunity:
+    enabled: true
+  snmpRubinCommunity:
+    enabled: true
+site: ls
+

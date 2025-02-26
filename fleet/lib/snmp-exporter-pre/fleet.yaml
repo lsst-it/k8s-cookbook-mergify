@@ -15,10 +15,10 @@ helm:
         enabled: true
       snmpLsstCommunity:
         enabled: true
-dependsOn:
-  - selector:
-      matchLabels:
-        bundle: external-secrets
+#dependsOn:
+#  - selector:
+#      matchLabels:
+#        bundle: external-secrets
 targetCustomizations:
   - name: pillan
     clusterName: pillan

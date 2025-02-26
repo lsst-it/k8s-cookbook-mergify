@@ -14,9 +14,9 @@ helm:
   valuesFiles:
     - values.yaml
 dependsOn:
-  - selector:
-      matchLabels:
-        bundle: snmp-exporter-pre
+  #- selector:
+  #    matchLabels:
+  #      bundle: snmp-exporter-pre
   - selector:
       matchLabels:
         bundle: prometheus-operator-crds
