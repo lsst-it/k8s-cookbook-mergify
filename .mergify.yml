@@ -7,7 +7,7 @@ pull_request_rules:
         branches:
           - master
         title: "{{ title }} (promote #{{ number }} to {{ destination_branch }})"
-        merge_bot_account: "{{ author }}"
+        bot_account: "{{ author }}"
         labels:
           - from-dev
         assignees:
