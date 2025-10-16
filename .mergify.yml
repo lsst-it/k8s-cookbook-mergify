@@ -2,7 +2,6 @@ pull_request_rules:
   - name: promote dev to master branch
     conditions:
       - base=dev
-      - merged
     actions:
       backport:
         branches:
